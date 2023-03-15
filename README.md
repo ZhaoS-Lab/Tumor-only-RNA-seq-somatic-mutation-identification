@@ -84,3 +84,10 @@ module load Perl/5.26.1-GCCcore-6.4.0
 [17] Model_prediction (final mutations results, ex: germline or somatic or WT)
 
 ```
+
+## **Other required file**
+
+To run the pipeline, you will need two extra files (human-dog protein sequence alignment files), but the file size is too large to put in GitHub.
+Contact us if you need those files.
+
+Kun-Lin Ho <kh31516@uga.edu> Shaying Zhao <szhao@uga.edu>
