@@ -246,6 +246,7 @@ if (wes_rna_filtering){
   file[Chrom_mut_info %in% wes_rna_overlap_somatic , Status:="Somatic"]
 }
 
+file <- file[grepl("Somatic",Status,ignore.case = T),]
 file <- unique(file[!Sample_name %in% old_sample,])
 
 fwrite(file, file = out_file_name, 
