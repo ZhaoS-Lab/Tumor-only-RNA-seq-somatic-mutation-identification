@@ -46,6 +46,8 @@ needed_column = ["Chrom", "Pos", "Ref", "Alt", "Ref_reads", "Alt_reads", "VAF"]
 ### load the data and prepare for model testing
 
 somatic_test_info = pd.read_csv(data_test_file, sep="\t")
+### only grep somatic results from the our previous pipeline filtering
+somatic_test_info = somatic_test_info[somatic_test_info.Status=="Somatic"]
 col_pos = np.where(np.array(somatic_test_info.columns) == "Status")[0][0]
 col_name = list(somatic_test_info.columns)
 col_name[col_pos] = "Pipeline_Results"
