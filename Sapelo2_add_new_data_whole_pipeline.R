@@ -6,21 +6,19 @@ if (length(args)==0) {
   stop("At least one argument must be supplied (input file).n", call.=FALSE)
 }
 
-count_chrom_mut_info_project <- function(each_chrom_mut_info_project, 
-                                         two_tumor_type_cut = gt1_tumor_type_cut, 
-                                         one_tumor_type_cut=0.4){
-  tumor_type_num <- length(unique(each_chrom_mut_info_project$Bioproject))
-  each_chrom_mut_info_tumor_type_ratio <- unique(each_chrom_mut_info_project[,.(Each_tumor_type_ratio,Bioproject)])$Each_tumor_type_ratio
-  gt2_cut_off <- each_chrom_mut_info_tumor_type_ratio[each_chrom_mut_info_tumor_type_ratio >= two_tumor_type_cut]
-  gt1_cut_off <- each_chrom_mut_info_tumor_type_ratio[each_chrom_mut_info_tumor_type_ratio >= one_tumor_type_cut]
+count_chrom_mut_info_project <- function(each_chrom_mut_info_project, two_project_cut = gt1_tumor_type_cut, one_project_cut=one_tumor_type_cut){
+  bioproject_num <- length(unique(each_chrom_mut_info_project$Bioproject))
+  each_chrom_mut_info_project_ratio <- unique(each_chrom_mut_info_project[,.(Each_tumor_type_ratio,Bioproject)])$Each_tumor_type_ratio
+  gt2_cut_off <- each_chrom_mut_info_project_ratio[each_chrom_mut_info_project_ratio >= two_project_cut]
+  gt1_cut_off <- each_chrom_mut_info_project_ratio[each_chrom_mut_info_project_ratio >= one_project_cut]
   num_project_gt2_cut_off <- length(gt2_cut_off)
   num_project_gt1_cut_off <- length(gt1_cut_off)
-  gt2_ratio_info <- paste(gt2_cut_off,collapse = ";")
+  gt2_ratio <- paste(gt2_cut_off,collapse = ";")
   
-  final_sum <- list(In_number_tumor_type = tumor_type_num,
-                    num_tumor_type_with_gt2_cut_off = num_project_gt2_cut_off,
-                    num_tumor_type_with_gt1_cut_off = num_project_gt1_cut_off,
-                    gt2_ratio_info =gt2_ratio_info)
+  final_sum <- list(In_number_bioproject = bioproject_num,
+                    num_project_with_gt2_cut_off = num_project_gt2_cut_off,
+                    num_project_with_gt1_cut_off = num_project_gt1_cut_off,
+                    gt2_ratio =gt2_ratio)
   return (final_sum)
 }
 

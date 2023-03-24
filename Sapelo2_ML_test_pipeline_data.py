@@ -47,7 +47,7 @@ needed_column = ["Chrom", "Pos", "Ref", "Alt", "Ref_reads", "Alt_reads", "VAF"]
 
 somatic_test_info = pd.read_csv(data_test_file, sep="\t")
 ### only grep somatic results from the our previous pipeline filtering
-somatic_test_info = somatic_test_info[somatic_test_info.Status=="Somatic"]
+somatic_test_info = somatic_test_info[somatic_test_info.Status == "Somatic"]
 col_pos = np.where(np.array(somatic_test_info.columns) == "Status")[0][0]
 col_name = list(somatic_test_info.columns)
 col_name[col_pos] = "Pipeline_Results"
@@ -106,9 +106,7 @@ remove_col = [
     "Transcript_mut_info",
     "Homo_Hetero_Ratio",
     "Gene_mut_info",
-    "Transcript_mut_info",
     "Hetero_ratio",
-    "Pipeline_Results",
     "Variant_in_all_sample_ratio",
     "Variants_in_number_tumor_type",
     "Each_tumor_type_total_sample",
@@ -117,6 +115,6 @@ remove_col = [
     "Homo_ratio",
     "Variants_in_each_tumor_type",
 ]
-final_test_data = final_test_data.drop(remove_col).drop_duplicates()
-
+final_test_data = final_test_data.drop(remove_col, axis=1)
+final_test_data = final_test_data.drop_duplicates()
 final_test_data.to_csv(final_output, sep="\t", index=False)
