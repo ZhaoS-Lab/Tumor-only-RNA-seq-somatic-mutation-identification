@@ -43,7 +43,7 @@ vaf_ratio_cut <- 0.2
 each_tumor_type_min_sample <- 10
 total_sample_cut <- 0.15 # PIK3CA 0.13
 gt1_tumor_type_cut <- 0.3 ## BRAF 0.31, PIK3CA is 0.27
-one_tumor_type_cut <- 0.4
+one_tumor_type_cut <- 0.45
 
 filtering_5steps <- T
 sample_recurrent <- T
@@ -216,9 +216,8 @@ if (sample_recurrent){
   
   ## look at how many samples have specific variants within each tumor type
   ## if each tumor type contains less than 10 samples or the variants can't reach gt2 tumor type cutoff (0.3), then we don't examine that variants)
-  target_tumor_type <- before_sample_recurrent_filtering[Each_tumor_type_total_sample>=each_tumor_type_min_sample & 
-                                                           Each_tumor_type_ratio>=gt1_tumor_type_cut,]
-  
+  target_tumor_type_chrom_mut <- unique(before_sample_recurrent_filtering[Each_tumor_type_total_sample>=each_tumor_type_min_sample & Each_tumor_type_ratio>=one_tumor_type_cut,]$Chrom_mut_info)
+  target_tumor_type <-  before_sample_recurrent_filtering[Chrom_mut_info %in% target_tumor_type_chrom_mut, ]   
   ## summarize the variants existing in how many tumor and if those variants gt than one tumor type cut or two tumor type cut 
   each_tumor_target_mut_sum <-  target_tumor_type[,count_chrom_mut_info_project(.SD), keyby = .(Chrom_mut_info)]
   ### if variants in gt two tumor types, if variants have ratios > gt2 tumor types, the variants are germline
