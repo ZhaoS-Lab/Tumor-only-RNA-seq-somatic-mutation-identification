@@ -10,7 +10,7 @@
 
 
 ml R/4.0.0-foss-2019b
-package_location='/home/kh31516/kh31516_Lab_Share_script/IdentifiyNeoAntigene/TORSMIC' ## the location where you put the script
+package_location='/home/kh31516/kh31516_Lab_Share_script/IdentifiyNeoAntigene/TORSMIC' ## the location where you put the package
 new_add_data='/scratch/kh31516/UGA/UGA_OSA_somatic_germline.txt.gz'                  ## the location of the table which you concat all of the results from all the samples
 pipeline_out_file_name='/scratch/kh31516/UGA/UGA_OSA_pipeline_filtering.txt' ## the output file from the pipeline without maching learning prediction
 ml_out_file_name='/scratch/kh31516/UGA/UGA_OSA_ml_filtering.txt' ## the output file from the pipeline with maching learning prediction
