@@ -7,15 +7,12 @@ The script will take each annovar output and DBSNP_filtering_gatk as inputs and 
 and c-bioportal data (after translated to human position)
 Notice:
 1. The final output might have fewers records than the original gatk vcf data, because the script will filter out the the records that don't have VAF info
-2. Now we use genome mutation(chrom+pos+ref+alt) identify in pan-cancer to identify pan-cancer records, 
-but still use transcript mutation(because only one transcript, so gene_aa_mutaiotn is the same) info to idenitfy c-bio
+2. We use genome mutation(chrom+pos+ref+alt) identify in pan-cancer to identify pan-cancer records
+3. We use transcript mutations (because only one transcript) info to idenitfy mutations that can be found in c-bio and cosmic database 
 
 It will create one output
-1. Final_sample_sum_out ( the df conatins the annovar info that has the mutation found in pan-cancer (include synonymous mutations),c-bioprotal and remained)
+1. Final_sample_sum_out ( the df conatins the annovar info that has the mutation found in pan-cancer (include synonymous mutations),c-bioprotal, cosmic and remained)
 
-### 1/28 we change pan-cancer annovar file as an argument 
-### 3/31/2022
-## include Cosmic dataset but follow the same logic as c-bioportal
 @author: kun-linho
 """
 
@@ -44,33 +41,50 @@ def extractVAF(gatk_info):
 gatk_vcf = sys.argv[1]
 annovar_gene_file = sys.argv[2]
 sample_name = sys.argv[3]
-pan_cancer_annovar_file = sys.argv[4]
 ## output data
-final_sample_sum_out = sys.argv[5]
-data_source_folder = sys.argv[6]
-module_loc = data_source_folder
+final_sample_sum_out = sys.argv[4]
+package_location = sys.argv[5]
+bio_project = sys.argv[6]
+module_loc = package_location + "/" + "scripts"
 sys.path.append(module_loc)
 from somatic_germline_module import *
 
-data_source_folder = Path(data_source_folder)
+package_location = Path(package_location)
 
 translate_to = "human"
 
+pan_cancer_annovar_file = (
+    package_location
+    / "data_source"
+    / "Ge2_Pass_QC_Pan_Cancer_Final_Mutect_annovar_include_syn_mutation_summary.txt"
+)
 
-c_bioportal_file = data_source_folder / "all_studies_c-bio_portal_somatic_mutation.txt"
-comsmic_file = data_source_folder / "GRCh37_V95_Cosmic_somatic_mutation.txt"
+c_bioportal_file = (
+    package_location / "data_source" / "all_studies_c-bio_portal_somatic_mutation.txt"
+)
+comsmic_file = (
+    package_location / "data_source" / "GRCh37_V95_Cosmic_somatic_mutation.txt"
+)
 c_bio_translate_file = (
-    data_source_folder / "c-bio_Human_GR37_103_canine_3.199_sequenceAlignment.txt"
+    package_location
+    / "data_source"
+    / "c-bio_Human_GR37_103_canine_3.199_sequenceAlignment.txt"
 )
 cosmic_translate_file = (
-    data_source_folder / "COSMIC_V95_Human_GR37_93_canine_3.199_sequenceAlignment.txt"
+    package_location
+    / "data_source"
+    / "COSMIC_V95_Human_GR37_93_canine_3.199_sequenceAlignment.txt"
 )
-retro_gene_file = data_source_folder / "retro_gene_list.txt"
+retro_gene_file = package_location / "data_source" / "retro_gene_list.txt"
 c_biohuman_dog_transcript = (
-    data_source_folder / "c_bioportal_Human_GR37_103_dog_transcript_3.199.txt"
+    package_location
+    / "data_source"
+    / "c_bioportal_Human_GR37_103_dog_transcript_3.199.txt"
 )
 cosm_human_dog_transcript = (
-    data_source_folder / "COSMIC_Human_GR37_V95_93_dog_transcript_3.199.txt"
+    package_location
+    / "data_source"
+    / "COSMIC_Human_GR37_V95_93_dog_transcript_3.199.txt"
 )
 ## process annovar out and extract all of the annovar information
 retro_gene_list = pd.read_csv(retro_gene_file, sep="\n", header=None)
@@ -332,4 +346,5 @@ total_final_out = total_final_out.drop(["VAF_info"], axis=1)
 total_final_out = total_final_out.sort_values(by="Line", key=natsort_keygen()).drop(
     columns="Line"
 )
+total_final_out.loc[:, "Bioproject"] = bio_project
 total_final_out.to_csv(final_sample_sum_out, sep="\t", index=False)

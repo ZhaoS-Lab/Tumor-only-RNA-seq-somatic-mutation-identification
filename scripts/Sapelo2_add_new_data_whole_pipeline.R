@@ -15,20 +15,22 @@ count_chrom_mut_info_project <- function(each_chrom_mut_info_project, two_projec
   num_project_gt1_cut_off <- length(gt1_cut_off)
   gt2_ratio <- paste(gt2_cut_off,collapse = ";")
   
-  final_sum <- list(In_number_bioproject = bioproject_num,
-                    num_project_with_gt2_cut_off = num_project_gt2_cut_off,
-                    num_project_with_gt1_cut_off = num_project_gt1_cut_off,
+  final_sum <- list(In_number_tumor_type = bioproject_num,
+                    num_tumor_type_with_gt2_cut_off = num_project_gt2_cut_off,
+                    num_tumor_type_with_gt1_cut_off = num_project_gt1_cut_off,
                     gt2_ratio =gt2_ratio)
   return (final_sum)
 }
 
-data_source <- as.character(args[1]) #'/home/kh31516/kh31516_Lab_Share_script/IdentifiyNeoAntigene/Complete_extract_somatic'
-setwd(data_source)
-source('somatic_germline_module.R')
+package_location <- as.character(args[1])
 new_data_file <- as.character(args[2])
-bio_tumor_label <- as.character(args[3])
-out_file_name <- as.character(args[4])
+out_file_name <- as.character(args[3])
 
+
+module_location <- paste(package_location,'somatic_germline_module.R',sep ="/")
+data_source <- paste(package_location,'data_source',sep="/")
+setwd(data_source)
+source(module_location)
 
 sample_cut_off <- 10
 second_sample_cut_off <- 5
@@ -60,8 +62,8 @@ file[,Chrom_mut_info:=paste(Chrom,Start,Ref,Alt, sep ="_")]
 
 ### check if tumor type is enter
 col_miss <- setdiff(colnames(file),colnames(new_data))
-### add tumor type for those newly added data
-new_data[,(col_miss):=bio_tumor_label]
+# ### add tumor type for those newly added data
+# new_data[,(col_miss):=bio_tumor_label]
 new_data[Source=='C-bio'| Source=="Cosmic",Source:="Human",]
 if (nrow(new_data)!=0){
   file <- rbind(file,new_data)
@@ -189,6 +191,7 @@ total_sample_num <- length(unique(file$Sample_name))
 file[,Variant_in_all_sample_ratio := Sample_number/total_sample_num]
 ### each tumor type level
 file[,Variants_in_number_tumor_type:=length(unique(Bioproject)), keyby =.(Chrom_mut_info)]
+
 each_tumor_type_samples <- file[,.(Each_tumor_type_total_sample=length(unique(Sample_name))),keyby = .(Bioproject)]
 target_tumor_type <- unique(file[,.(Chrom_mut_info,Sample_name,Bioproject)])
 
